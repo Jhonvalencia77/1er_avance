@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import time
 import ray
+import warnings
+
 
 ray.init()
 #Creamos la función
@@ -15,6 +17,8 @@ def Añadir_Paths(start,end):
 
 @ray.remote
 def fun_filtrar(path,verbose=True):
+    warnings.filterwarnings("ignore")
+
     global timeseries_o
     n = 0
     #Verifica si la variable de función "verbose esta en True", Si es asi entonces imprime el porcentaje de archivos concatenados
@@ -38,11 +42,12 @@ def fun_filtrar(path,verbose=True):
 
     return filtrado
 
-start = "20200214"
-end = "20200215"
+start = "20200717"
+end = "20200731"
 
 timeseries_o = []
 filtrado2 = pd.DataFrame({})
+#contador = 0
 
 
 Rutas = Añadir_Paths(start,end)
@@ -53,6 +58,10 @@ for path in Rutas:
 VarRay = ray.get(timeseries_o)
 
 for df in VarRay:
+#    contador += 1
     filtrado2 = filtrado2.append(df)
+#    if contador == 10:
+#        time.sleep(240)
+#        contador = 0
 
-filtrado2.to_csv("DataFiltrado_Madrid3.csv")
+filtrado2.to_csv("DataFiltradoJulio2020_2.csv")
